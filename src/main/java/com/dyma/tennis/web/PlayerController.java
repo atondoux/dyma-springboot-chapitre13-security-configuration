@@ -5,11 +5,14 @@ import com.dyma.tennis.Player;
 import com.dyma.tennis.PlayerToSave;
 import com.dyma.tennis.service.PlayerService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,12 +23,13 @@ import java.util.List;
 @Tag(name = "Tennis Players API")
 @RestController
 @RequestMapping("/players")
+@SecurityScheme(name = "bearerAuth", type = SecuritySchemeType.HTTP, scheme = "bearer", bearerFormat = "JWT")
 public class PlayerController {
 
     @Autowired
     private PlayerService playerService;
 
-    @Operation(summary = "Finds players", description = "Finds players")
+    @Operation(summary = "Finds players", description = "Finds players", security = {@SecurityRequirement(name = "bearerAuth")})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Players list",
                     content = {@Content(mediaType = "application/json",

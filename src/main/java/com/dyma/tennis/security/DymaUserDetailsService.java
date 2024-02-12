@@ -8,11 +8,11 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-@Service
+@Component("userDetailsService")
 public class DymaUserDetailsService implements UserDetailsService {
 
     @Autowired
@@ -21,11 +21,11 @@ public class DymaUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {
         return userRepository.findOneWithRolesByLoginIgnoreCase(login)
-                .map(userEntity -> createSpringSecurityUser(login, userEntity))
+                .map(this::createSpringSecurityUser)
                 .orElseThrow(() -> new UsernameNotFoundException("User with login " + login + " could not be found."));
     }
 
-    private org.springframework.security.core.userdetails.User createSpringSecurityUser(String login, UserEntity user) {
+    private org.springframework.security.core.userdetails.User createSpringSecurityUser(UserEntity user) {
         List<SimpleGrantedAuthority> grantedRoles = user
                 .getRoles()
                 .stream()
